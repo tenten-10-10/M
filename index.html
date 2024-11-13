@@ -16,47 +16,63 @@
 <p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
 <p class="p1"><span class="s1">&lt;html lang="ja"&gt;</span></p>
 <p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;title&gt;メダルコレクション&lt;/title&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;メダルコレクション&lt;/title&gt;</span></p>
 <p class="p1"><span class="s1">&lt;/head&gt;</span></p>
 <p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;h1&gt;メダルコレクション&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;div id="message"&gt;NFCタグをスキャンしてメダルを集めよう！&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;div id="medal-count"&gt;現在のメダル数: 読み込み中...&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;h1&gt;メダルコレクション&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="message"&gt;NFCタグをスキャンしてメダルを集めよう！&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="medal-count"&gt;現在のメダル数: 読み込み中...&lt;/div&gt;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    &lt;script&gt;</span></p>
-<p class="p1"><span class="s1">        const userId = "guest1"; // ユーザーIDの設定</span></p>
-<p class="p1"><span class="s1">        const urlParams = new URLSearchParams(window.location.search);</span></p>
-<p class="p1"><span class="s1">        const tagID = urlParams.get('tagID');</span></p>
-<p class="p1"><span class="s1">        const baseUrl = "https://script.google.com/macros/s/AKfycbyK1UeEC266KQEtDojfcXmw_GE11nWkWkZT4Kdd3cxmeJfWg8ChAhPMTC6bjJuwwupepw/exec"; // API URLに置き換え</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// ユーザーIDをローカルストレージに保存して一意に管理</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let userId = localStorage.getItem('userId');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>if (!userId) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// ランダムなユーザーIDを生成して保存</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>userId = 'user_' + Math.random().toString(36).substr(2, 9);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>localStorage.setItem('userId', userId);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>console.log('User ID:', userId); // 生成したユーザーIDを確認</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">        function updateMedalCount() {</span></p>
-<p class="p1"><span class="s1">            fetch(`${baseUrl}?userId=${userId}&amp;action=getMedalCount`)</span></p>
-<p class="p1"><span class="s1">                .then(response =&gt; response.text())</span></p>
-<p class="p1"><span class="s1">                .then(count =&gt; {</span></p>
-<p class="p1"><span class="s1">                    document.getElementById("medal-count").textContent = `現在のメダル数: ${count}`;</span></p>
-<p class="p1"><span class="s1">                });</span></p>
-<p class="p1"><span class="s1">        }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// URLのクエリパラメータからtagIDを取得</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const urlParams = new URLSearchParams(window.location.search);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const tagID = urlParams.get('tagID');</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">        function recordMedal() {</span></p>
-<p class="p1"><span class="s1">            fetch(`${baseUrl}?userId=${userId}&amp;tagID=${tagID}&amp;action=recordMedal`)</span></p>
-<p class="p1"><span class="s1">                .then(response =&gt; response.text())</span></p>
-<p class="p1"><span class="s1">                .then(message =&gt; {</span></p>
-<p class="p1"><span class="s1">                    document.getElementById("message").textContent = message === "Medal recorded"</span></p>
-<p class="p1"><span class="s1">                        ? `メダルを獲得しました！タグID: ${tagID}`</span></p>
-<p class="p1"><span class="s1">                        : "このタグは既にスキャン済みです";</span></p>
-<p class="p1"><span class="s1">                    updateMedalCount();</span></p>
-<p class="p1"><span class="s1">                });</span></p>
-<p class="p1"><span class="s1">        }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Google Apps ScriptのAPI URL</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const baseUrl = "https://script.google.com/macros/s/AKfycbyK1UeEC266KQEtDojfcXmw_GE11nWkWkZT4Kdd3cxmeJfWg8ChAhPMTC6bjJuwwupepw/exec"; // あなたのAPI URLに置き換え</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">        document.addEventListener("DOMContentLoaded", () =&gt; {</span></p>
-<p class="p1"><span class="s1">            updateMedalCount();</span></p>
-<p class="p1"><span class="s1">            if (tagID) {</span></p>
-<p class="p1"><span class="s1">                recordMedal();</span></p>
-<p class="p1"><span class="s1">            }</span></p>
-<p class="p1"><span class="s1">        });</span></p>
-<p class="p1"><span class="s1">    &lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// メダル数を取得して表示する関数</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function updateMedalCount() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>fetch(`${baseUrl}?userId=${userId}&amp;action=getMedalCount`)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>.then(response =&gt; response.text())</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>.then(count =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>document.getElementById("medal-count").textContent = `現在のメダル数: ${count}`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>})</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>.catch(error =&gt; console.error("エラー:", error));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// 新しいメダルを記録する関数</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function recordMedal() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>fetch(`${baseUrl}?userId=${userId}&amp;tagID=${tagID}&amp;action=recordMedal`)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>.then(response =&gt; response.text())</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>.then(message =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>document.getElementById("message").textContent = message === "Medal recorded"</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>? `メダルを獲得しました！タグID: ${tagID}`</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>: "このタグは既にスキャン済みです";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>updateMedalCount(); // メダル数を更新</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>})</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>.catch(error =&gt; console.error("エラー:", error));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// ページ読み込み時にメダル数を取得し、タグIDがあればメダルを記録</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.addEventListener("DOMContentLoaded", () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>updateMedalCount();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (tagID) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>recordMedal();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
 <p class="p1"><span class="s1">&lt;/body&gt;</span></p>
 <p class="p1"><span class="s1">&lt;/html&gt;</span></p>
 </body>
